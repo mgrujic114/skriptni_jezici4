@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Vezba 1</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link rel="stylesheet" href="main.css"> 
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="row">
+      <nav class="navbar navbar-expand-sm bg-light navbar-light">
+
+        <div class="container-fluid justify-content-center">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="11422rn.html">početna</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="usluge.html">ponuda</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="termini.html">termini</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="kategorije.html">kategorije</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="opcije.html">opcije</a>
+            </li>
+          </ul>
+        </div>
+
+      </nav>
+
+    </div>
+    <h1>Zakazani termini</h1>
+
+    <div class="container mt-3">
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Vreme</th>
+            <th>Sadrzaj</th>
+            <th>Status</th>
+            <th>Cena</th>
+            <th>Klijent</th>
+            <th id="m"></th>
+          </tr>
+        </thead>
+        
+        <tbody id="spisak">
+          
+        </tbody>
+      </table>
+
+    </div>
+      
+  </main>
+
+  <script>
+    window.addEventListener("load", function(){
+      fetch('http://localhost:9000/termin/').then(response => {
+        let promise = response.json();
+        
+        promise.then(data=>{
+          console.log(data);
+          for (let i=0; i<data.length; i++){
+            let tr = document.createElement("tr");
+            let vreme = document.createElement("td");
+            var formattedDate = new Date(data[i].vreme).toLocaleString();
+
+            vreme.innerHTML = formattedDate;
+            tr.appendChild(vreme);
+
+            let termini = document.createElement("td");
+            var c = 0;
+            // Iteriraj kroz niz opcija
+            for (let j = 0; j < data[i].termini.length; j++) {
+                // Kreiraj element <p> za svaku opciju
+                let uslugaElement = document.createElement("p");
+                // Postavi tekst na osnovu podataka iz niza opcija
+                uslugaElement.innerHTML = data[i].termini[j].usluga.naziv;
+                c+= data[i].termini[j].usluga.cena;
+                // Dodaj <p> element u <td>
+                termini.appendChild(uslugaElement);
+            }
+            tr.appendChild(termini);
+
+            let status = document.createElement("td");
+            status.innerHTML = data[i].status;
+            tr.appendChild(status);
+
+            let cena = document.createElement("td");
+            cena.innerHTML = c;
+            tr.appendChild(cena);
+
+            let klijent = document.createElement("td");
+            klijent.innerHTML = data[i].klijent;
+            tr.appendChild(klijent);
+
+            let akcija = document.createElement("td");
+
+            let btnIzmeni = document.createElement("a");
+            btnIzmeni.className = "btn btn-primary";
+            btnIzmeni.innerHTML = "Detalji";
+            btnIzmeni.href = `termin.html?id=${data[i].id}`;
+            akcija.appendChild(btnIzmeni);
+
+            tr.appendChild(akcija);
+
+            tr.dataset.id = data[i].id;
+
+            document.getElementById("spisak").appendChild(tr);
+          }
+          }
+        );
+        }
+      ).catch(error => {
+          console.error('Error:', error);
+          }
+      );
+      
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
